@@ -25,7 +25,7 @@ An authorized GM account is required for privileged actions. ForeverGM does not 
 
 ## Installation
 
-1. Download `ForeverGM-0.10.1.zip` from the [latest release](https://github.com/filinodz/ForeverGM/releases/latest).
+1. Download `ForeverGM-0.11.0.zip` from the [latest release](https://github.com/filinodz/ForeverGM/releases/latest).
 2. Extract the archive into your client's `_classic_beta_/Interface/AddOns/` directory.
 3. Check that the final structure is `Interface/AddOns/ForeverGM/ForeverGM.toc` — not a nested `ForeverGM/ForeverGM/` folder.
 4. Enable **ForeverGM** on the character-selection AddOns screen.
@@ -59,11 +59,13 @@ Counts below describe the bundled data snapshot, not a guarantee that every reco
 
 - Movable, resizable window with saved position, dimensions and scale.
 - Responsive collection grid: a side inspector on wide windows and a lower inspector on compact windows.
-- Collections populate on opening; the default Skills page does not require a search first.
+- The new landing dashboard has 12 illustrated catalog-count cards and 16 essential shortcuts, without search filters, an empty inspector or pagination.
+- Click a statistics card to browse its collection. Counts come from the bundled data snapshot, not live realm activity.
+- Collections populate on opening; no initial search is required.
 - Name/ID search, accent-insensitive matching, category filters and favorites filtering.
 - Paginated results: 60 cards per page, with all matching entries accessible.
 - Native item/spell tooltips where supported by the client.
-- Draggable minimap launcher: left-click opens the panel; right-click opens settings.
+- Redesigned circular gold/teal minimap medallion, with a larger readable eye/key symbol, hover and pressed feedback. Left-click opens the panel; right-click opens settings; dragging saves its position.
 - English, French and Spanish interface localization, with automatic locale selection and an `esMX` alias.
 
 ### Skills: weapons, armor, professions and more
@@ -97,6 +99,14 @@ Commands travel through the normal WoW chat command channel. A rate-limited queu
 The status display distinguishes preparation, dispatch, observed server responses and detected failures. **Sending a command does not prove success.** Unstructured system messages are correlated heuristically; always check the actual result, especially for destructive or administrative actions.
 
 ## Quick start
+
+### Use the dashboard
+
+Enter `/fgm` after loading the addon to see the dashboard. Its 12 icon cards show the exact bundled counts for items, spells, quests, NPCs, GameObjects, skills, equipment sets, mounts, teleports, languages, achievements and commands. Click any card to enter that collection; collection pagination remains available there, not on the dashboard.
+
+The essential-tools grid contains 12 explicit GM commands (enable/disable GM mode, flight, god mode, visibility and GM chat, plus normal speed and server information), each with a review/confirmation step. Four additional shortcuts open weapon-skill and profession previews, the self-only class-learning confirmation, and settings. No action tile claims to know the current server-side on/off state.
+
+At narrower widths the cards form fewer columns; the dashboard scrolls vertically to keep every tile accessible. The top banner shows the current player target and client compatibility information.
 
 ### Give compatible weapon skills
 
@@ -177,7 +187,7 @@ Python 3.10+ and Node.js are development tools only; players do not need them. T
 
 `Tools/generate_data.py` is an offline maintainer tool tied to the documented local repack layout and read-only database queries. It is **not** needed to install the addon and is not a generic database importer. Review and adapt its source paths/connection settings before regenerating another environment. `Tools/inspect_reference.js` parses reference Lua table literals without executing the reference addon.
 
-More verification details: [testing notes](docs/TESTING.md). Changes should preserve target protections, permission boundaries, locale key coverage and data provenance.
+More verification details: [testing notes](docs/TESTING.md). Asset generation and the minimap design brief are documented in [asset notes](docs/ASSETS.md). Changes should preserve target protections, permission boundaries, locale key coverage and data provenance.
 
 ## License and credits
 

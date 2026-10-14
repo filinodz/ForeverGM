@@ -101,7 +101,8 @@ function UI:Create()
  resize:SetScript("OnMouseDown",function()f:StartSizing("BOTTOMRIGHT")end);resize:SetScript("OnMouseUp",function()f:StopMovingOrSizing();UI:SaveGeometry()end)
  f:SetScript("OnSizeChanged",function()UI:Layout()end)
  f:SetScript("OnShow",function()UI:RefreshIdentity();UI:Layout()end)
- f:Hide();self:SetSection("skills");self:Layout()
+ self:CreateDashboard()
+ f:Hide();self:SetSection("dashboard");self:Layout()
 end
 
 function UI:Layout()
@@ -110,6 +111,7 @@ function UI:Layout()
  self.search:SetWidth(math.max(200,math.min(380,width*.43)))
  self.identity:SetWidth(math.max(100,self.main:GetWidth()-480))
  self.subtitle:SetWidth(240)
+ if self.activeSection=="dashboard" then self:LayoutDashboard();return end
  self.scroll:ClearAllPoints();self.detail:ClearAllPoints()
  if wide then
   local detailWidth=math.min(340,math.floor(width*.32))
@@ -148,6 +150,7 @@ function UI:SaveGeometry()
 end
 function UI:RefreshIdentity()
  local target=FGM.Catalog:Target();self.identity:SetText((UnitName("player") or "?") .. " · " .. (GetRealmName() or "?") .. "\n" .. FGM:L("CURRENT_TARGET",target and target.name or "—"))
+ if self.dashboardIdentity then self.dashboardIdentity:SetText((UnitName("player") or "?") .. " · " .. FGM:L("CURRENT_TARGET",target and target.name or "—"))end
 end
 function UI:Show()self:Create();self.main:Show();FGM.State.visible=true end
 function UI:Hide()if self.main then self.main:Hide()end;FGM.State.visible=false end
@@ -164,7 +167,10 @@ function UI:SetSection(id)
  self.category="all";self.classID=0;self.onlyFavorites=false;self.results={};self.page=1;self.selected=nil
  for key,b in pairs(self.sidebarButtons)do b:SetBackdropBorderColor(unpack(key==id and T.colors.gold or T.colors.goldDim))end
  for _,pair in ipairs(sections)do if pair[1]==id then self.sectionTitle:SetText(FGM:L(pair[2])) end end
- self.search:SetText("");self.search.placeholder:Show();self:ClearActions()
+ self.search:ClearFocus();self.search:SetText("");self.search.placeholder:Show();self:ClearActions()
+ local dashboard=id=="dashboard"
+ self.dashboard:SetShown(dashboard)
+ for _,control in ipairs({self.search,self.categoryButton,self.classButton,self.favoriteButton,self.countText,self.bulkBar,self.scroll,self.detail,self.pager})do control:SetShown(not dashboard)end
  for _,b in ipairs(self.bulkButtons)do b:Hide()end
  self.detailIcon:SetTexture(FGM.Catalog.sectionIcons[id]);self.detailTitle:SetText(FGM:L("DETAIL_EMPTY"));self.detailText:SetText("")
  C:SetButtonText(self.categoryButton,FGM:L("FILTER_CATEGORY") .. ": " .. FGM:L("ALL"))
@@ -184,6 +190,7 @@ function UI:SetSection(id)
  end
  if id=="dashboard" then self:ShowDashboard()
  else self:BeginSearch("")end
+ self:Layout()
 end
 function UI:SetBulkButton(i,key,callback)local b=self.bulkButtons[i];C:SetButtonText(b,FGM:L(key));b:SetScript("OnClick",callback);b:Show()end
 
@@ -236,6 +243,7 @@ end
 
 function UI:RenderPage()
  if not self.rows then return end
+ if self.activeSection=="dashboard" then return end
  local results=self.results or {};local total=#results;local pages=math.max(1,math.ceil(total/60));self.page=math.min(self.page or 1,pages)
  local width=math.max(200,self.scroll:GetWidth());local columns=math.max(1,math.floor(width/220));local cardWidth=(width-8-(columns-1)*8)/columns
  local shown=0
@@ -257,13 +265,6 @@ function UI:RenderPage()
  self.countText:SetText(FGM:L("RESULTS",total));self.pageLabel:SetText(FGM:L("PAGE",self.page,pages,total));self.previous:SetEnabled(self.page>1);self.next:SetEnabled(self.page<pages)
 end
 
-function UI:ShowDashboard()
- self.results={};self:RenderPage();self.detailTitle:SetText(FGM:L("DASH_WELCOME"));self.detailIcon:SetTexture("Interface\\AddOns\\ForeverGM\\Assets\\ForeverGM-Emblem")
- local lines={FGM.Compatibility:Summary(),"",FGM:L("MINIMAP_HELP"),""}
- for _,kind in ipairs({"skills","spells","mounts","items","teleport"})do lines[#lines+1]=FGM:L("DASH_DATA",FGM:L(string.upper(kind)),#FGM.Database:GetSource(kind))end
- self.empty:SetText(table.concat(lines,"\n"));self.empty:Show()
- self:SetAction(1,FGM:L("SKILLS"),function()UI:SetSection("skills")end);self:SetAction(2,FGM:L("SPELLS"),function()UI:SetSection("spells")end)
-end
 function UI:ClearActions()
  for _,b in ipairs(self.actionButtons or {})do b:Hide();b:SetScript("OnClick",nil)end
  self.args:SetText("");self.argsLabel:SetText(FGM:L("ARGUMENTS"));self.args:Show();self.argsLabel:Show()

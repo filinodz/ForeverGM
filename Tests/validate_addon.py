@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -24,6 +25,19 @@ toc_text = toc.read_text(encoding="utf-8")
 interface = re.search(r"^## Interface:\s*(\d+)", toc_text, re.MULTILINE)
 if not interface or interface.group(1) != "16001":
     fail("TOC interface is not the verified 16001")
+version = re.search(r"^## Version:\s*(\S+)", toc_text, re.MULTILINE)
+init_text = (ROOT / "Core" / "Init.lua").read_text(encoding="utf-8")
+if not version or f'FGM.version = "{version.group(1)}"' not in init_text:
+    fail("TOC and runtime versions differ")
+asset = ROOT / "Assets" / "ForeverGM-Minimap-v2.tga"
+if not asset.exists():
+    fail("Minimap medallion asset is missing")
+asset_bytes = asset.read_bytes()
+header = struct.unpack("<BBBHHBHHHHBB", asset_bytes[:18])
+if header[2] != 2 or header[8:12] != (128, 128, 32, 0x28) or len(asset_bytes) != 18 + 128 * 128 * 4:
+    fail("Minimap asset is not the expected alpha-enabled 128px TGA")
+if not any(alpha == 0 for alpha in asset_bytes[21::4]) or not any(alpha > 0 for alpha in asset_bytes[21::4]):
+    fail("Minimap asset lacks transparent/visible pixels")
 
 listed_files: list[str] = []
 for line in toc_text.splitlines():

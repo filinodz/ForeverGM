@@ -4,7 +4,8 @@
 |---|---|---|
 | Addon load target | Implemented; static verified | Interface 16001; in-game confirmation still required |
 | Main window | Implemented | Responsive icon grid; side/lower inspector switches at 860px content width; movable, resizable, persistent |
-| Minimap launcher | Implemented | Click, right-click settings, drag, persistence, hide option |
+| Dashboard | Implemented; mocked runtime verified | 12 illustrated catalog counts, 16 confirmed commands/workflows, responsive grid; no pagination or live-realm claims |
+| Minimap launcher | Implemented; mocked runtime verified | Circular eye/key medallion, hover/press feedback, larger hit area; click, right-click settings, drag, persistence, hide option |
 | Command explorer | Implemented | 680 source/database command records with RBAC metadata |
 | Dynamic command execution | Implemented | Validated free-form arguments, confirmations, rate-limited queue |
 | Response tracking | Implemented | Prepared/dispatched/response/failure distinction; no fake success |

@@ -22,6 +22,7 @@ Core -> Database/search -> UI/modules -> CommandExecutor -> WoW chat -> ForeverC
 - `Core/Database.lua`: incremental search over 500 source rows per update, with accent normalization and predicates applied before pagination. An empty query browses the full collection; there is no discarded-results cap.
 - `Core/Catalog.lua`: name/icon API adapters, DB2-backed categories, class/race matching and skill values.
 - `UI/`: theme, reusable controls, tooltips, confirmation dialogs, main window, and minimap button. The window lays out a responsive card grid and switches its detail inspector between side and bottom positions. Pages reuse 60 cards.
+- `UI/Dashboard.lua`: separate full-width, vertically scrolling landing page with 12 count cards and 16 shortcuts. It has no collection pager or search job; real collection views retain those controls. GM shortcuts use the existing confirmation/executor path.
 - `Modules/`: feature metadata that binds navigation areas to verified command/data capabilities.
 - `Data/`: generated immutable tables. `BiS.lua` is intentionally empty until reviewed profiles exist.
 

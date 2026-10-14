@@ -88,15 +88,16 @@ def write_tga(path: Path, size: int, rgba: bytes) -> None:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        raise SystemExit("Usage: prepare_assets.py <source.png>")
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] != "--minimap-only"):
+        raise SystemExit("Usage: prepare_assets.py <source.png> [--minimap-only]")
     source = Path(sys.argv[1]).resolve()
     assets = Path(__file__).resolve().parents[1] / "Assets"
     assets.mkdir(parents=True, exist_ok=True)
     width, height, rgba = read_png(source)
-    for size, name in ((128, "ForeverGM-Emblem.tga"), (64, "ForeverGM-Minimap.tga")):
+    outputs = ((128, "ForeverGM-Minimap-v2.tga"),) if "--minimap-only" in sys.argv else ((128, "ForeverGM-Emblem.tga"), (64, "ForeverGM-Minimap.tga"))
+    for size, name in outputs:
         write_tga(assets / name, size, resize_area(width, height, rgba, size))
-    print(f"Prepared 128px and 64px TGA assets from {source.name}")
+    print(f"Prepared {len(outputs)} TGA asset(s) from {source.name}")
 
 
 if __name__ == "__main__":

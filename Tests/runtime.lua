@@ -18,6 +18,8 @@ function UnitRace()return "Human","Human",FGM_TEST.raceID end
 function UnitLevel()return FGM_TEST.level end
 function UnitGUID()return FGM_TEST.guid end
 function GetRealmName()return "Forever"end
+function GetCursorPosition()return 180,200 end
+math.atan2 = math.atan2 or function(y,x)return math.atan(y,x)end
 function InCombatLockdown()return false end
 function SendChatMessage(text)FGM_TEST.sent[#FGM_TEST.sent+1]=text end
 DEFAULT_CHAT_FRAME={AddMessage=function()end}
@@ -65,9 +67,11 @@ function frame:IsShown()return self.shown end
 function frame:SetChecked(v)self.checked=v end
 function frame:GetChecked()return self.checked end
 function frame:GetFrameLevel()return 1 end
+function frame:GetCenter()return 100,200 end
+function frame:SetVerticalScroll(value)self.scrollOffset=value end
 function frame:SetScrollChild(child)self.child=child end
 function frame:GetEffectiveScale()return 1 end
-for _,method in ipairs({"SetBackdrop","SetBackdropColor","SetBackdropBorderColor","SetFrameStrata","SetClampedToScreen","SetMovable","SetResizable","SetScale","SetResizeBounds","SetMinResize","EnableMouse","RegisterForDrag","SetFontObject","SetJustifyH","SetJustifyV","SetTextColor","SetTexCoord","SetAutoFocus","SetTextInsets","SetEnabled","SetVerticalScroll","SetNormalTexture","SetHighlightTexture","SetFrameLevel","SetFocus","ClearFocus","HighlightText","StartMoving","StopMovingOrSizing","StartSizing","RegisterEvent","RegisterForClicks","SetPushedTexture"})do frame[method]=function()end end
+for _,method in ipairs({"SetBackdrop","SetBackdropColor","SetBackdropBorderColor","SetFrameStrata","SetClampedToScreen","SetMovable","SetResizable","SetScale","SetResizeBounds","SetMinResize","EnableMouse","RegisterForDrag","SetFontObject","SetJustifyH","SetJustifyV","SetTextColor","SetTexCoord","SetAutoFocus","SetTextInsets","SetEnabled","SetNormalTexture","SetHighlightTexture","SetFrameLevel","SetFocus","ClearFocus","HighlightText","StartMoving","StopMovingOrSizing","StartSizing","RegisterEvent","RegisterForClicks","SetPushedTexture","SetHitRectInsets"})do frame[method]=function()end end
 UIParent=new();UIParent:SetSize(1920,1080);Minimap=new(UIParent);GameTooltip=new(UIParent)
 function GameTooltip:SetOwner()end;function GameTooltip:AddLine()end;function GameTooltip:AddDoubleLine()end;function GameTooltip:SetHyperlink()end
 function StaticPopup_Show(_,_,_,data)FGM_TEST.confirm=data end
@@ -79,6 +83,57 @@ function FGM_RUN_TESTS()
  local checks=0
  local function check(condition,message)assert(condition,message);checks=checks+1 end
  local function drainSearch()local n=0;while F.Database.job do F.Database:OnUpdate();n=n+1;assert(n<1000,"search did not finish")end end
+ check(F.UI.activeSection=="dashboard" and F.UI.dashboard:IsShown(),"Dashboard must be the landing page")
+ check(not F.UI.pager:IsShown() and not F.UI.search:IsShown() and not F.UI.detail:IsShown(),"Dashboard has irrelevant collection controls")
+ check(#F.UI.dashboardStats==12 and #F.UI.dashboardShortcuts==16,"Dashboard tiles missing")
+ check(F.UI.dashboardStats[1].value:GetText()=="24,288","Catalog count formatting incorrect")
+ for _,tile in ipairs(F.UI.dashboardStats)do
+  check(tile.count==#F.Database:GetSource(tile.kind),"Dashboard count differs from catalog")
+  check(tile.icon.texture~=nil,"Dashboard stat icon missing")
+  tile.scripts.OnClick(tile);drainSearch();check(F.UI.activeSection==tile.kind,"Stat tile opens wrong collection")
+  check(F.UI.pager:IsShown() and F.UI.search:IsShown() and not F.UI.dashboard:IsShown(),"Collection controls did not return")
+  check(#F.UI.scroll.points==2 and #F.UI.detail.points==2,"Collection viewport not anchored after dashboard navigation")
+  F.UI:SetSection("dashboard")
+ end
+ for _,width in ipairs({820,1000,1160,1600,1920})do
+  F.UI.main:SetSize(width,760)
+  check(not F.UI.pager:IsShown() and not F.Database.job,"Dashboard resize triggered pagination or search")
+  for _,cards in ipairs({F.UI.dashboardStats,F.UI.dashboardShortcuts})do
+   for _,tile in ipairs(cards)do
+    check(tile.points[1][4]+tile.width<=F.UI.dashboard:GetWidth(),"Dashboard card exceeds viewport")
+    check(tile.width>=190,"Dashboard card too narrow")
+    check(-tile.points[1][5]+tile.height<=F.UI.dashboardBody:GetHeight(),"Dashboard card below scroll extent")
+   end
+  end
+ end
+ for _,tile in ipairs(F.UI.dashboardShortcuts)do
+  if tile.command then
+   FGM_TEST.confirm=nil;local queued=#F.CommandExecutor.queue;local sent=#FGM_TEST.sent
+   tile.scripts.OnClick(tile)
+   check(FGM_TEST.confirm~=nil and #F.CommandExecutor.queue==queued and #FGM_TEST.sent==sent,"GM shortcut dispatched before confirmation")
+   FGM_TEST.confirm.callback()
+   check(F.CommandExecutor.queue[#F.CommandExecutor.queue].text==F.CommandRegistry:Build(tile.command,tile.command.defaultArgs or ""),"Shortcut command/default arguments changed")
+   F.CommandExecutor:Cancel()
+  elseif tile.workflow=="LEARN_CLASS_SELF" then
+   FGM_TEST.confirm=nil;tile.scripts.OnClick(tile);check(FGM_TEST.confirm~=nil,"Class workflow skipped confirmation")
+   FGM_TEST.confirm.callback();check(F.CommandExecutor.queue[#F.CommandExecutor.queue].text==".learn my trainer","Class workflow is not self-only")
+   F.CommandExecutor:Cancel()
+  else
+   tile.scripts.OnClick(tile)
+   check(tile.workflow=="SETTINGS" and F.UI.settings:IsShown() or F.UI.bulkPanel and F.UI.bulkPanel:IsShown(),"Dashboard workflow did not open")
+   if F.UI.bulkPanel then F.UI.bulkPanel:Hide()end;if F.UI.settings then F.UI.settings:Hide()end
+  end
+ end
+ F.UI:CreateMinimapButton();local launcher=F.UI.minimap
+ check(launcher:GetWidth()==38 and launcher.icon.texture:find("Minimap%-v2"),"New minimap medallion not installed")
+ launcher.scripts.OnEnter(launcher);check(launcher.icon:GetWidth()==36,"Minimap hover feedback missing")
+ launcher.scripts.OnMouseDown(launcher);check(launcher.icon:GetWidth()==30,"Minimap pressed feedback missing")
+ launcher.scripts.OnMouseUp(launcher);launcher.scripts.OnLeave(launcher);check(launcher.icon:GetWidth()==34,"Minimap icon did not reset")
+ F.UI:Show();launcher.scripts.OnClick(launcher,"LeftButton");check(not F.UI.main:IsShown(),"Minimap toggle did not close")
+ launcher.scripts.OnClick(launcher,"LeftButton");check(F.UI.main:IsShown(),"Minimap toggle did not open")
+ launcher.scripts.OnClick(launcher,"RightButton");check(F.UI.settings:IsShown(),"Minimap right-click settings broken");F.UI.settings:Hide()
+ launcher.scripts.OnDragStart(launcher);launcher.scripts.OnUpdate(launcher);launcher.scripts.OnDragStop(launcher)
+ check(F.DB.profile.minimap.angle==0 and not launcher.dragging,"Minimap drag did not persist angle")
  for key in pairs(F.Locales.enUS)do check(F.Locales.frFR[key]~=nil and F.Locales.esES[key]~=nil,"Missing translation: " .. key)end
  check(F.Data.SkillLearnSpells[43]==201 and F.Data.SkillLearnSpells[95]==204,"Wrong weapon/defense proficiency mapping")
  F.UI:SetSection("skills");drainSearch();check(#F.UI.results==154,"Skills should open populated")

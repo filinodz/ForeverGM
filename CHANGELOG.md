@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.0 — 2026-10-14
+
+- Replaced the text-only dashboard with a responsive landing page: 12 illustrated catalog-count cards and 16 essential-tools/workflow shortcuts.
+- Removed dashboard pagination, search/filter controls and the empty detail inspector; retained pagination in real collections.
+- Added clickable statistics, formatted counts, player-target/build banner, hover feedback and vertical scrolling at compact widths.
+- Routed every dashboard GM command through explicit confirmation and the existing validated, rate-limited executor. No inferred toggle status is displayed.
+- Redesigned the minimap launcher with an original circular gold/teal eye-and-key medallion, a larger clickable area and hover/pressed feedback; retained left/right click, dragging, persistence and hiding.
+- Corrected minimap drag coordinates to use the minimap's effective scale.
+- Added English/French/Spanish dashboard labels, asset-format/version validation and dashboard/minimap regression coverage.
+
 ## 0.10.1 — 2026-10-14
 
 - Fixed the missing Quest icon in navigation, collection cards and the detail inspector by using client-verified FileDataID 134939.
