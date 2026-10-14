@@ -1,0 +1,30 @@
+name: Validate addon
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test-only Lua tools
+        run: npm install --prefix "$RUNNER_TEMP/forevergm-lua" --no-save --no-audit --no-fund luaparse@0.3.1 fengari@0.1.4
+      - name: Verify addon package and datasets
+        run: python Tests/validate_addon.py
+      - name: Parse in-game Lua 5.1
+        env:
+          FGM_LUAPARSE: ${{ runner.temp }}/forevergm-lua/node_modules/luaparse
+        run: node Tests/syntax.js
+      - name: Run mocked runtime regression suite
+        env:
+          FGM_FENGARI: ${{ runner.temp }}/forevergm-lua/node_modules/fengari
+        run: node --max-old-space-size=4096 Tests/runtime.js

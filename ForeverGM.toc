@@ -1,0 +1,64 @@
+## Interface: 16001
+## Title: |cffffcc66ForeverGM|r
+## Notes: Verified Game Master command center for WoWForever.
+## Author: WoWForever
+## Version: 0.10.1
+## SavedVariables: ForeverGMDB
+## IconTexture: Interface\AddOns\ForeverGM\Assets\ForeverGM-Emblem
+
+Core/Init.lua
+Locales/enUS.lua
+Locales/frFR.lua
+Locales/esES.lua
+Locales/Catalog.lua
+Core/Compatibility.lua
+Core/SavedVariables.lua
+
+Data/Commands.lua
+Data/Spells.lua
+Data/Skills.lua
+Data/SkillRules.lua
+Data/SkillLearnSpells.lua
+Data/Languages.lua
+Data/Mounts.lua
+Data/Items.lua
+Data/ItemSets.lua
+Data/Teleports.lua
+Data/Quests.lua
+Data/Creatures.lua
+Data/GameObjects.lua
+Data/Achievements.lua
+Data/BiS.lua
+
+Core/Permissions.lua
+Core/CommandRegistry.lua
+Core/CommandExecutor.lua
+Core/Database.lua
+Core/Catalog.lua
+
+UI/Theme.lua
+UI/Components.lua
+UI/Dialogs.lua
+UI/Tooltips.lua
+UI/Notifications.lua
+UI/MainWindow.lua
+UI/Minimap.lua
+
+Modules/Accounts.lua
+Modules/Characters.lua
+Modules/Spells.lua
+Modules/Skills.lua
+Modules/Languages.lua
+Modules/Mounts.lua
+Modules/Items.lua
+Modules/BiS.lua
+Modules/NPCs.lua
+Modules/GameObjects.lua
+Modules/Teleport.lua
+Modules/Quests.lua
+Modules/Achievements.lua
+Modules/Moderation.lua
+Modules/Server.lua
+Modules/Commands.lua
+
+Core/Events.lua
