@@ -15,4 +15,5 @@ run('FGM_TEST_NS = {}','namespace');
 for (const file of fs.readFileSync(path.join(root,'ForeverGM.toc'),'utf8').split(/\r?\n/).map(s=>s.trim()).filter(s=>s&&!s.startsWith('##'))) {
  run(fs.readFileSync(path.join(root,file),'utf8'),file,true);
 }
-run('print("PASS: " .. FGM_RUN_TESTS() .. " runtime assertions; browse, icons, class filters, paging, resizing, bulk compatibility, confirmation and cancellation")','tests');
+run(fs.readFileSync(path.join(__dirname,'commands.lua'),'utf8'),'command transport tests');
+run('print("PASS: " .. (FGM_RUN_TESTS() + FGM_RUN_COMMAND_TESTS()) .. " runtime assertions; browsing, layout, minimap, immediate chat transport, throttling, confirmation and cancellation")','tests');

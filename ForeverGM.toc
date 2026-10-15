@@ -2,7 +2,7 @@
 ## Title: |cffffcc66ForeverGM|r
 ## Notes: Verified Game Master command center for WoWForever.
 ## Author: WoWForever
-## Version: 0.11.0
+## Version: 0.11.1
 ## SavedVariables: ForeverGMDB
 ## IconTexture: Interface\AddOns\ForeverGM\Assets\ForeverGM-Emblem
 

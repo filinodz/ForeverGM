@@ -25,7 +25,7 @@ An authorized GM account is required for privileged actions. ForeverGM does not 
 
 ## Installation
 
-1. Download `ForeverGM-0.11.0.zip` from the [latest release](https://github.com/filinodz/ForeverGM/releases/latest).
+1. Download the versioned `ForeverGM-<version>.zip` asset from the [latest release](https://github.com/filinodz/ForeverGM/releases/latest).
 2. Extract the archive into your client's `_classic_beta_/Interface/AddOns/` directory.
 3. Check that the final structure is `Interface/AddOns/ForeverGM/ForeverGM.toc` — not a nested `ForeverGM/ForeverGM/` folder.
 4. Enable **ForeverGM** on the character-selection AddOns screen.
@@ -94,9 +94,9 @@ The “Equipment sets” section is a catalog of verified sets, not a best-in-sl
 
 The command explorer includes account, character, moderation, server and debug categories. Its records combine command registrations, available database help and RBAC metadata from the matching core. Review the syntax and arguments before executing.
 
-Commands travel through the normal WoW chat command channel. A rate-limited queue (default 0.45 seconds between commands), confirmation dialogs for marked actions, queue cancellation and target-change protection reduce accidental operations. These protections do not replace server permissions, backups or careful GM judgment.
+Isolated commands are sent immediately from their button or confirmation click through the normal WoW chat API, as a whisper to your own character. The matching ForeverCore parser handles dot commands before ordinary chat routing. The addon echoes `Sent to chat: .command` locally; it does not wait for a server acknowledgement before sending another operation. Only rapid clicks and bulk operations need the rate-limited queue (default 0.45 seconds between commands). Confirmation dialogs, queue cancellation and target-change protection remain in place. These protections do not replace server permissions, backups or careful GM judgment.
 
-The status display distinguishes preparation, dispatch, observed server responses and detected failures. **Sending a command does not prove success.** Unstructured system messages are correlated heuristically; always check the actual result, especially for destructive or administrative actions.
+The status display distinguishes preparation, sending, observed server responses and detected failures. **Sending a command does not prove server-side success.** Response observation is optional, expires after eight seconds and never leaves a command waiting or triggers an automatic retry. Unstructured system messages are correlated heuristically; always check the actual result, especially for destructive or administrative actions.
 
 ## Quick start
 

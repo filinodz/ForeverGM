@@ -18,7 +18,7 @@ Core -> Database/search -> UI/modules -> CommandExecutor -> WoW chat -> ForeverC
 - `Core/Compatibility.lua`: build and optional-API detection.
 - `Core/SavedVariables.lua`: schema defaults, migration, favorites, recent local history.
 - `Core/CommandRegistry.lua`: verified metadata lookup and safe command construction.
-- `Core/CommandExecutor.lua`: validation, destructive-action confirmations, pacing, cancellation, and response-state tracking.
+- `Core/CommandExecutor.lua`: validation, destructive-action confirmations, synchronous isolated sends through self-whisper chat, burst/bulk pacing, cancellation, and optional expiring response observation. No server response gates dispatch. Commands are echoed locally only after the chat API call returns without throwing.
 - `Core/Database.lua`: incremental search over 500 source rows per update, with accent normalization and predicates applied before pagination. An empty query browses the full collection; there is no discarded-results cap.
 - `Core/Catalog.lua`: name/icon API adapters, DB2-backed categories, class/race matching and skill values.
 - `UI/`: theme, reusable controls, tooltips, confirmation dialogs, main window, and minimap button. The window lays out a responsive card grid and switches its detail inspector between side and bottom positions. Pages reuse 60 cards.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.1 — 2026-10-15
+
+- Send isolated commands synchronously from their button/confirmation click instead of deferring every operation to OnUpdate.
+- Route commands through normal self-whisper chat, matching the verified ForeverCore command parser; do not emit delayed public SAY messages.
+- Replace the misleading "awaiting server response" status with "Sent to chat" in English, French and Spanish, and echo the sent command locally in chat.
+- Keep burst/bulk pacing, confirmation dialogs, target-change cancellation, command validation and server-side permissions.
+- Expire optional response observation without blocking, resending commands or fabricating success. Surface transport failures without recording them as sent.
+- Add regression coverage for synchronous sends, chat channel/recipient, both chat API families, no-response progress, failures and safeguards.
+
 ## 0.11.0 — 2026-10-14
 
 - Replaced the text-only dashboard with a responsive landing page: 12 illustrated catalog-count cards and 16 essential-tools/workflow shortcuts.

@@ -5,7 +5,7 @@ bit = { band=function(a,b)
  a,b=math.floor(a),math.floor(b);if a<0 then a=a+4294967296 end;if b<0 then b=b+4294967296 end
  local result,power=0,1;while a>0 and b>0 do if a%2==1 and b%2==1 then result=result+power end;a=math.floor(a/2);b=math.floor(b/2);power=power*2 end;return result
 end }
-_G.FGM_TEST = { clock=20, classID=8, raceID=1, level=60, guid="Player-A", sent={} }
+_G.FGM_TEST = { clock=20, classID=8, raceID=1, level=60, guid="Player-A", sent={}, chatCalls={}, messages={} }
 function GetTime()return FGM_TEST.clock end
 function time()return 1 end
 function GetBuildInfo()return "1.60.1","70338","2026-10-14",16001 end
@@ -21,8 +21,11 @@ function GetRealmName()return "Forever"end
 function GetCursorPosition()return 180,200 end
 math.atan2 = math.atan2 or function(y,x)return math.atan(y,x)end
 function InCombatLockdown()return false end
-function SendChatMessage(text)FGM_TEST.sent[#FGM_TEST.sent+1]=text end
-DEFAULT_CHAT_FRAME={AddMessage=function()end}
+function SendChatMessage(text,channel,language,recipient)
+ FGM_TEST.sent[#FGM_TEST.sent+1]=text
+ FGM_TEST.chatCalls[#FGM_TEST.chatCalls+1]={text=text,channel=channel,language=language,recipient=recipient}
+end
+DEFAULT_CHAT_FRAME={AddMessage=function(_,message)FGM_TEST.messages[#FGM_TEST.messages+1]=message end}
 YES="Yes";CANCEL="Cancel";StaticPopupDialogs={};UISpecialFrames={};SlashCmdList={}
 LOCALIZED_CLASS_NAMES_MALE={WARRIOR="Warrior",PALADIN="Paladin",HUNTER="Hunter",ROGUE="Rogue",PRIEST="Priest",SHAMAN="Shaman",MAGE="Mage",WARLOCK="Warlock",DRUID="Druid"}
 C_Spell={GetSpellTexture=function(id)return id+100000 end}
@@ -112,7 +115,8 @@ function FGM_RUN_TESTS()
    tile.scripts.OnClick(tile)
    check(FGM_TEST.confirm~=nil and #F.CommandExecutor.queue==queued and #FGM_TEST.sent==sent,"GM shortcut dispatched before confirmation")
    FGM_TEST.confirm.callback()
-   check(F.CommandExecutor.queue[#F.CommandExecutor.queue].text==F.CommandRegistry:Build(tile.command,tile.command.defaultArgs or ""),"Shortcut command/default arguments changed")
+   local last=F.CommandExecutor.queue[#F.CommandExecutor.queue]
+   check((last and last.text or FGM_TEST.sent[#FGM_TEST.sent])==F.CommandRegistry:Build(tile.command,tile.command.defaultArgs or ""),"Shortcut command/default arguments changed")
    F.CommandExecutor:Cancel()
   elseif tile.workflow=="LEARN_CLASS_SELF" then
    FGM_TEST.confirm=nil;tile.scripts.OnClick(tile);check(FGM_TEST.confirm~=nil,"Class workflow skipped confirmation")
@@ -173,9 +177,10 @@ function FGM_RUN_TESTS()
  FGM_TEST.raceID=95;local _,skyborne=F.BuildSkillPlan("weapons",true,nil,F.Catalog:Target());check(#skyborne>5,"Skyborne race mask bit 32 was not handled")
  FGM_TEST.raceID=96;local _,skyborneHorde=F.BuildSkillPlan("weapons",true,nil,F.Catalog:Target());check(#skyborneHorde>5,"Skyborne race mask bit 33 was not handled")
  FGM_TEST.raceID=1
+ local bulkSentBefore=#FGM_TEST.sent
  F.CommandExecutor:QueueBulk({".setskill 55 1 300",".setskill 44 1 300"},{targetGUID=FGM_TEST.guid,bulk=true})
- FGM_TEST.clock=30;F.CommandExecutor:OnUpdate();check(#FGM_TEST.sent==1,"Queue did not dispatch first action")
- FGM_TEST.guid="Player-B";FGM_TEST.clock=31;F.CommandExecutor:OnUpdate();check(#FGM_TEST.sent==1 and #F.CommandExecutor.queue==0,"Target change failed to cancel queue")
+ FGM_TEST.clock=30;F.CommandExecutor:OnUpdate();check(#FGM_TEST.sent==bulkSentBefore+1,"Queue did not dispatch first action")
+ FGM_TEST.guid="Player-B";FGM_TEST.clock=31;F.CommandExecutor:OnUpdate();check(#FGM_TEST.sent==bulkSentBefore+1 and #F.CommandExecutor.queue==0,"Target change failed to cancel queue")
  local command,error=F.CommandRegistry:Build("learn","133\n.server restart 1");check(command==nil and error~=nil,"Command injection accepted")
  local before=#FGM_TEST.sent;F.CommandExecutor:Execute(".ban character Test 1h reason",nil,true);check(#FGM_TEST.sent==before and FGM_TEST.confirm~=nil,"Dangerous action skipped confirmation")
  F.UI:ShowSettings();check(F.UI.settings:IsShown(),"Settings did not open")

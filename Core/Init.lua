@@ -2,7 +2,7 @@ local ADDON_NAME, FGM = ...
 
 _G.ForeverGM = FGM
 FGM.name = ADDON_NAME
-FGM.version = "0.11.0"
+FGM.version = "0.11.1"
 FGM.interface = 16001
 FGM.Data = FGM.Data or {}
 FGM.Locales = FGM.Locales or {}
