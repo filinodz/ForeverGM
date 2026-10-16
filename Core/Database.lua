@@ -32,6 +32,7 @@ function DB:Search(kind, text, callback, predicate)
                 local haystack = row.searchText or tostring(name or "")
                 if kind == "items" then haystack = haystack .. " " .. tostring(row[10] or "") end
                 if kind == "skills" and FGM.Catalog then haystack = haystack .. " " .. FGM.Catalog:SkillName(row) end
+                if kind ~= "commands" and kind ~= "gmtools" and FGM.Catalog then haystack=haystack .. " " .. FGM.Catalog:Name(kind,row,true) end
                 match = self:Normalize(haystack):find(needle, 1, true) ~= nil
             end
             if match and (not predicate or predicate(row)) then results[#results + 1] = row end

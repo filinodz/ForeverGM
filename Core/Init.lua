@@ -2,7 +2,7 @@ local ADDON_NAME, FGM = ...
 
 _G.ForeverGM = FGM
 FGM.name = ADDON_NAME
-FGM.version = "0.11.1"
+FGM.version = "0.12.0"
 FGM.interface = 16001
 FGM.Data = FGM.Data or {}
 FGM.Locales = FGM.Locales or {}
@@ -14,9 +14,22 @@ function FGM:RegisterLocale(locale, values)
     self.Locales[locale] = values
 end
 
+function FGM:NormalizeLocale(locale, preserveUnsupported)
+    local aliases = {enus="enUS",engb="enUS",frfr="frFR",eses="esES",esmx="esES"}
+    return aliases[string.lower(tostring(locale or ""))] or (preserveUnsupported and tostring(locale) or "enUS")
+end
+
+function FGM:GetClientLocale()
+    return self:NormalizeLocale(GetLocale and GetLocale() or "enUS", true)
+end
+
+function FGM:GetLanguage()
+    local selected = self.DB and self.DB.profile.language or "auto"
+    return string.lower(tostring(selected)) == "auto" and self:NormalizeLocale(self:GetClientLocale()) or self:NormalizeLocale(selected)
+end
+
 function FGM:L(key, ...)
-    local selected = self.DB and self.DB.profile.language or (GetLocale and GetLocale()) or "enUS"
-    if selected == "auto" then selected = (GetLocale and GetLocale()) or "enUS" end
+    local selected = self:GetLanguage()
     local tableForLocale = self.Locales[selected] or self.Locales.enUS or {}
     local value = tableForLocale[key] or (self.Locales.enUS and self.Locales.enUS[key]) or key
     if select("#", ...) > 0 then

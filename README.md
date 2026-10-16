@@ -17,7 +17,7 @@ ForeverGM brings searchable game data, illustrated collections, skill management
 
 ## Compatibility
 
-Built for the locally verified **WoWForever Classic beta 1.60.1.70338**, with **Interface 16001**, and its **ForeverCore / TrinityCore-derived server using Vanilla world data converted from VMaNGOS**.
+Targets **WoWForever Classic beta 1.60.1**, with **Interface 16001**, and its **ForeverCore / TrinityCore-derived server using Vanilla world data converted from VMaNGOS**. The local executable observed on 2026-10-16 is build **70374** (previously 70338); automated mock tests are not a live-client execution guarantee.
 
 This is not a generic addon for every VMaNGOS server, the original 1.12 client, or official retail WoW. Command syntax, permissions and available IDs may differ on another server. See [compatibility notes](docs/COMPATIBILITY.md).
 
@@ -43,13 +43,13 @@ Counts below describe the bundled data snapshot, not a guarantee that every reco
 | --- | ---: | --- |
 | Skills | 154 | Proficiency icons; learn verified proficiency spells; set current and maximum values; preview bulk grants |
 | Spells | 32,337 | Class/category filters, learn, unlearn and cast; trainer and quest annotations |
-| Items | 24,288 | Item icons, quality colors, item levels, slot filters, tooltips and quantity-based grants |
-| Equipment sets | 198 | Full verified member lists, class filtering and confirmed set grants |
+| Items | 24,335 | Item icons, quality colors, item levels, slot filters, localized names and quantity-based grants |
+| Sets / BiS | 286 | 277 client set records plus 9 sourced Phase-6 candidate collections; T1/T2/T3 and class filters; missing-data status before grants |
 | NPCs | 69,220 | Name/ID search and confirmed spawning |
 | GameObjects | 83,993 | Name/ID search and confirmed spawning |
 | Quests | 48,793 | Quest icons, add, complete and remove |
 | Teleports | 2,313 | Named destinations with map/coordinates and teleport actions |
-| Mounts | 136 | Client-defined mount spells with learn, unlearn and cast actions |
+| Mounts | 141 | Client-referenced mount spells, including 5 newly exposed references awaiting names; individual and confirmed bulk learning |
 | Languages | 13 | Individual learning and a confirmed learn-all action |
 | Achievements | 104 | Named available records and grant actions |
 | Commands | 680 | Searchable syntax, help, permission metadata and source provenance |
@@ -84,11 +84,25 @@ The snapshot contains **1,388 trainer annotations**, **51 quest-spell annotation
 
 **Learn my class spells** confirms and sends `.learn my trainer`. This is a **self** action: the server chooses the compatible spells for your own class, regardless of your selected target.
 
+**Give GM spells** opens a selectable preview of the two locally verified core debug spells. It does not indiscriminately teach every internal/test spell. **Give all mounts** previews all 141 positive SourceSpellIDs read from the matching Mount.db2; five references have no name in the extracted SpellName snapshot yet and may display an ID until the matching-language client can resolve them. Neither button bypasses faction, race, level or server restrictions. Both capture the selected player's GUID and cancel remaining queued operations when it changes; an NPC target is rejected. The Skills page retains its all-compatible-skills preview.
+
 ### Items and equipment sets
 
 Inspect an item, enter a positive quantity, then grant it through the server command. Sets show the complete client-verified membership before sending `.additem set <ID>` with confirmation. Items are placed in bags; sets are not automatically equipped.
 
-The “Equipment sets” section is a catalog of verified sets, not a best-in-slot ranking or automated gear optimizer.
+Use the **T1**, **T2**, **T3** and **BiS** toolbar filters in **Sets / BiS**. All nine class records appear for each tier. The original T1/T2 member IDs are absent from the inspected item metadata, so these 18 legacy sets are visibly unavailable and cannot be granted. Their names and membership remain inspectable instead of silently disappearing. This does not imply the corresponding raids or every custom replacement item are unavailable.
+
+Nine **PvE Phase 6 source-candidate collections** cover Warrior, Mage, Rogue, Hunter and Warlock damage roles, plus Priest, Paladin, Shaman and Druid healing roles. Recommendations come from the linked Classic Era Icy Veins guides. These are **not complete optimized loadouts**: only exact, unambiguous item-name/ID matches in this client's catalog are grantable, and the inspector states how many source recommendations remain unresolved. Alternatives may occupy the same slot. The grant uses individual `.additem` commands, not a fabricated server set ID, with confirmation and target protection. No claim of optimal gearing under custom WoWForever balance is made. Full source and availability details are in [BiS coverage](docs/BIS_COVERAGE.json).
+
+### Selected language and data coverage
+
+The addon language controls collection names, search results, set-member previews, class/slot/role labels and supported interface text. `enUs`/`ENUS`/`enGB` normalize to `enUS`; `esMX` uses the Spanish catalog. **Auto follows the game client's text locale, not Windows.** Reload after choosing a language in settings.
+
+English item names no longer fall back to the French source column: **24,312 of 24,335 items have an offline English name**. For unresolved items on a matching-language client, ForeverGM uses modern `C_Item.GetItemInfo`, requests uncached data once and refreshes visible cards/details when it arrives. The 154 skill lines and 13 language lines have complete English/French/Spanish labels.
+
+**A 100% multilingual game-data translation is not claimed.** The available local exports do not contain every language for every custom item, spell, NPC, object or set. An unresolved record displays an explicit translated “translation unavailable” label and its ID, never silently substitutes French or English from another locale. Native game tooltips follow the client locale; if it differs from the addon language, a localized summary replaces the native tooltip. Server responses and command destination tokens cannot be translated by the addon.
+
+See [localization coverage](docs/LOCALIZATION.md) and the generated [coverage counts](docs/LOCALE_COVERAGE.json). Additional matching-build localized exports are needed to fill the remaining names faithfully.
 
 ### Commands and operational safeguards
 

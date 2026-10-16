@@ -24,7 +24,9 @@ Core -> Database/search -> UI/modules -> CommandExecutor -> WoW chat -> ForeverC
 - `UI/`: theme, reusable controls, tooltips, confirmation dialogs, main window, and minimap button. The window lays out a responsive card grid and switches its detail inspector between side and bottom positions. Pages reuse 60 cards.
 - `UI/Dashboard.lua`: separate full-width, vertically scrolling landing page with 12 count cards and 16 shortcuts. It has no collection pager or search job; real collection views retain those controls. GM shortcuts use the existing confirmation/executor path.
 - `Modules/`: feature metadata that binds navigation areas to verified command/data capabilities.
-- `Data/`: generated immutable tables. `BiS.lua` is intentionally empty until reviewed profiles exist.
+- `Core/LocalizedData.lua`: selected-locale data resolution and translated summaries; never mixes a French base name into an English selection. Matching-client item cache events refresh visible labels.
+- `Data/`: generated immutable tables. `LocalizedNames.lua` / `SkillNames.lua` supply locale-tagged names. `BiS.lua` appends 9 sourced Phase-6 candidate collections to the set browser, with explicit incomplete-coverage metadata.
+- `Modules/SpellBulk.lua`: selectable mount/GM-spell previews and item-by-item BiS candidate grants; confirmations, captured target GUIDs and the existing executor enforce safeguards.
 
 ## Security boundaries
 
@@ -36,4 +38,4 @@ Data is represented as compact positional arrays except command metadata. Search
 
 ## Adding BiS profiles
 
-Profiles must identify expansion/build, content phase, PvE/PvP context, class/spec, item IDs, alternatives, and source citations. The module should remain disabled unless every referenced item exists in the generated item set and the profile has been reviewed for this build.
+Profiles must identify expansion/build, content phase, PvE/PvP context, class/role, item IDs, alternatives, source citations and missing coverage. Candidate collections are not complete optimized loadouts. Only locally validated, unambiguous matches can enter the grant queue; never turn a synthetic profile ID into `.additem set`. Original client sets with missing members remain inspectable but unavailable.

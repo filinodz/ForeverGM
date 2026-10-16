@@ -4,6 +4,7 @@
 
 - Client executable: `<WoW client>/_classic_beta_/WowB.exe`
 - Product and file version: **1.60.1.70338**
+- Executable observed on 2026-10-16: **1.60.1.70374**. This is a file-version observation, not a live-client execution pass.
 - Addon interface: **16001**, verified from the installed `ForeverRecap.toc`
 - Server: the packaged `ForeverCore-source-1.5.0-20261014-000613` fork
 - Repack readme description: WoW Classic beta 1.60.1, with setup notes that support build 70291 and later

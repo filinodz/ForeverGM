@@ -2,7 +2,7 @@
 ## Title: |cffffcc66ForeverGM|r
 ## Notes: Verified Game Master command center for WoWForever.
 ## Author: WoWForever
-## Version: 0.11.1
+## Version: 0.12.0
 ## SavedVariables: ForeverGMDB
 ## IconTexture: Interface\AddOns\ForeverGM\Assets\ForeverGM-Emblem
 
@@ -12,6 +12,7 @@ Locales/frFR.lua
 Locales/esES.lua
 Locales/Catalog.lua
 Locales/Dashboard.lua
+Locales/Collections.lua
 Core/Compatibility.lua
 Core/SavedVariables.lua
 
@@ -30,6 +31,9 @@ Data/Creatures.lua
 Data/GameObjects.lua
 Data/Achievements.lua
 Data/BiS.lua
+Data/LocalizedNames.lua
+Data/SkillNames.lua
+Core/LocalizedData.lua
 
 Core/Permissions.lua
 Core/CommandRegistry.lua
@@ -50,6 +54,7 @@ Modules/Accounts.lua
 Modules/Characters.lua
 Modules/Spells.lua
 Modules/Skills.lua
+Modules/SpellBulk.lua
 Modules/Languages.lua
 Modules/Mounts.lua
 Modules/Items.lua

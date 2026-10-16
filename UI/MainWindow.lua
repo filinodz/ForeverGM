@@ -12,7 +12,9 @@ local slotTokens = {[0]="INVTYPE_NON_EQUIP",[1]="INVTYPE_HEAD",[2]="INVTYPE_NECK
 local function panel(parent) local f=FGM:CreateCompatibleFrame("Frame",nil,parent); T:ApplyPanel(f); return f end
 local function icon(parent, size) local x=parent:CreateTexture(nil,"ARTWORK");x:SetSize(size,size);x:SetTexCoord(.06,.94,.06,.94);return x end
 local function categoryName(value)
- if value:find("^slot_") then local n=tonumber(value:sub(6));return _G[slotTokens[n] or ""] or FGM:L("ID") .. " " .. tostring(n) end
+ if value:find("^slot_") then return FGM:L("SLOT_" .. value:sub(6)) end
+ if value=="t1" or value=="t2" or value=="t3" or value=="bis" then return FGM:L("TIER_" .. string.upper(value)) end
+ if UI.activeKind=="bis" and value=="other" then return FGM:L("TIER_OTHER") end
  local commandLabels={account="ACCOUNTS",character="CHARACTERS",moderation="MODERATION",server="SERVER",debug="DEBUG",gm="CAT_GM",npc="NPCS",gameobject="GAMEOBJECTS",teleport="TELEPORT",quests="QUESTS",achievements="ACHIEVEMENTS",items="ITEMS",spells="SPELLS",skills="SKILLS",lookup="SEARCH",other="CAT_OTHER"}
  return FGM:L(commandLabels[value] or ("CAT_" .. string.upper(value)))
 end
@@ -21,9 +23,9 @@ function UI:Create()
  if self.main then return end
  local w=FGM.DB.profile.window
  local f=panel(UIParent);self.main=f;_G.ForeverGMMainFrame=f
- f:SetSize(math.max(820,w.width),math.max(620,w.height));f:SetPoint(w.point,UIParent,w.relativePoint,w.x,w.y)
+ f:SetSize(math.max(820,w.width),math.max(700,w.height));f:SetPoint(w.point,UIParent,w.relativePoint,w.x,w.y)
  f:SetFrameStrata("HIGH");f:SetClampedToScreen(true);f:SetMovable(true);f:SetResizable(true);f:SetScale(FGM.DB.profile.scale)
- if f.SetResizeBounds then f:SetResizeBounds(820,620,1920,1200) else f:SetMinResize(820,620) end
+ if f.SetResizeBounds then f:SetResizeBounds(820,700,1920,1200) else f:SetMinResize(820,700) end
  table.insert(UISpecialFrames,"ForeverGMMainFrame")
  local header=panel(f);header:SetPoint("TOPLEFT",6,-6);header:SetPoint("TOPRIGHT",-6,-6);header:SetHeight(66)
  header:EnableMouse(true);header:RegisterForDrag("LeftButton");header:SetScript("OnDragStart",function() f:StartMoving() end)
@@ -61,7 +63,7 @@ function UI:Create()
  self.countText=C:Label(content,"",false,T.colors.muted);self.countText:SetPoint("TOPLEFT",16,-92)
  self.bulkBar=CreateFrame("Frame",nil,content);self.bulkBar:SetPoint("TOPLEFT",14,-114);self.bulkBar:SetPoint("TOPRIGHT",-14,-114);self.bulkBar:SetHeight(30)
  self.bulkButtons={}
- for i=1,3 do local b=C:Button(self.bulkBar,"",150,28);b:SetPoint("LEFT",(i-1)*158,0);b:Hide();self.bulkButtons[i]=b end
+ for i=1,4 do local b=C:Button(self.bulkBar,"",150,28);b.text:SetFontObject("GameFontNormalSmall");b.text:SetWidth(142);b.text:SetHeight(24);b:SetPoint("LEFT",(i-1)*158,0);b:Hide();self.bulkButtons[i]=b end
 
  self.scroll=CreateFrame("ScrollFrame",nil,content,"UIPanelScrollFrameTemplate")
  self.scrollChild=CreateFrame("Frame",nil,self.scroll);self.scrollChild:SetSize(400,1);self.scroll:SetScrollChild(self.scrollChild)
@@ -113,13 +115,18 @@ function UI:Layout()
  self.subtitle:SetWidth(240)
  if self.activeSection=="dashboard" then self:LayoutDashboard();return end
  self.scroll:ClearAllPoints();self.detail:ClearAllPoints()
+ local bulkCount=0;for _,b in ipairs(self.bulkButtons)do if b:IsShown()then bulkCount=bulkCount+1 end end
+ local bulkCols=math.max(1,math.floor((width-28+8)/158));local bulkRows=math.max(1,math.ceil(bulkCount/bulkCols))
+ self.bulkBar:SetHeight(bulkRows*36)
+ for i,b in ipairs(self.bulkButtons)do b:ClearAllPoints();b:SetPoint("TOPLEFT",((i-1)%bulkCols)*158,-math.floor((i-1)/bulkCols)*36)end
+ local collectionTop=114+bulkRows*36+8
  if wide then
   local detailWidth=math.min(340,math.floor(width*.32))
-  self.detail:SetPoint("TOPRIGHT",-12,-114);self.detail:SetPoint("BOTTOMRIGHT",-12,48);self.detail:SetWidth(detailWidth)
-  self.scroll:SetPoint("TOPLEFT",12,-154);self.scroll:SetPoint("BOTTOMRIGHT",-detailWidth-44,48)
+  self.detail:SetPoint("TOPRIGHT",-12,-collectionTop);self.detail:SetPoint("BOTTOMRIGHT",-12,48);self.detail:SetWidth(detailWidth)
+  self.scroll:SetPoint("TOPLEFT",12,-collectionTop);self.scroll:SetPoint("BOTTOMRIGHT",-detailWidth-44,48)
  else
   self.detail:SetPoint("BOTTOMLEFT",12,48);self.detail:SetPoint("BOTTOMRIGHT",-12,48);self.detail:SetHeight(200)
-  self.scroll:SetPoint("TOPLEFT",12,-146);self.scroll:SetPoint("BOTTOMRIGHT",-32,262)
+  self.scroll:SetPoint("TOPLEFT",12,-collectionTop);self.scroll:SetPoint("BOTTOMRIGHT",-32,262)
  end
  local sw=math.max(200,self.scroll:GetWidth());self.scrollChild:SetWidth(sw)
  self.empty:SetWidth(math.max(180,sw-28))
@@ -181,12 +188,25 @@ function UI:SetSection(id)
   self:SetBulkButton(3,"BULK_PROFESSIONS",function()UI:ShowSkillBulk("professions")end)
  elseif id=="languages" then
   self:SetBulkButton(1,"LEARN_ALL_LANGUAGES",function()UI:Run("learn all languages","",nil,true)end)
+ elseif id=="mounts" then
+  self:SetBulkButton(1,"GIVE_MOUNTS",function()UI:ShowSpellBulk("mounts")end)
+ elseif id=="gmtools" then
+  self:SetBulkButton(1,"GIVE_GM_SPELLS",function()UI:ShowSpellBulk("gm")end)
+  self:SetBulkButton(2,"GIVE_ALL_SKILLS",function()UI:ShowSkillBulk("all")end)
+ elseif id=="bis" then
+  for index,value in ipairs({"t1","t2","t3","bis"})do
+   local category=value
+   self:SetBulkButton(index,"TIER_SHORT_" .. string.upper(category),function()
+    UI.category=category;C:SetButtonText(UI.categoryButton,categoryName(category));UI:BeginSearch(UI.search:GetText())
+   end)
+  end
  elseif id=="spells" then
   self:SetBulkButton(1,"CAT_GM",function()UI.category="gm";UI.classID=0;C:SetButtonText(UI.classButton,FGM:L("ALL_CLASSES"));UI:BeginSearch(UI.search:GetText());C:SetButtonText(UI.categoryButton,categoryName("gm"))end)
   self:SetBulkButton(2,"TRAINER_SPELLS",function()UI.category="trainer";UI:BeginSearch(UI.search:GetText());C:SetButtonText(UI.categoryButton,FGM:L("TRAINER_SPELLS"))end)
   self:SetBulkButton(3,"LEARN_CLASS_SELF",function()
     UI:ConfirmCommand(FGM:L("LEARN_CLASS_SELF_HINT"),function()UI:Run("learn my trainer","",{kind="spells",label=FGM:L("LEARN_CLASS_SELF")})end)
   end)
+  self:SetBulkButton(4,"GIVE_GM_SPELLS",function()UI:ShowSpellBulk("gm")end)
  end
  if id=="dashboard" then self:ShowDashboard()
  else self:BeginSearch("")end
@@ -200,7 +220,7 @@ function UI:ShowFilterMenu(mode)
  menu:SetPoint("TOPLEFT",mode=="class" and self.classButton or self.categoryButton,"BOTTOMLEFT",0,-2)
  local options={{value=mode=="class" and 0 or "all",label=FGM:L("ALL")}}
  if mode=="class" then
-  for _,id in ipairs({1,2,3,4,5,7,8,9,11})do options[#options+1]={value=id,label=LOCALIZED_CLASS_NAMES_MALE[classTokens[id]] or classTokens[id]}end
+  for _,id in ipairs({1,2,3,4,5,7,8,9,11})do options[#options+1]={value=id,label=FGM:ClassName(id)}end
  else
   local seen={}
   for _,row in ipairs(FGM.Database:GetSource(self.activeKind))do local cat=FGM.Catalog:Category(self.activeKind,row);if not seen[cat]and cat~="all"then seen[cat]=true;options[#options+1]={value=cat,label=categoryName(cat)}end end
@@ -284,11 +304,11 @@ function UI:SelectRecord(row)
  local meta={kind=kind,id=id,label=name};local lines={FGM:L("ID") .. ": " .. tostring(id)}
  if kind=="commands"or kind=="gmtools"then
   self.args:SetText(row.defaultArgs or "")
-  lines={FGM:L("SYNTAX") .. "\n" .. row.syntax,"",FGM:L("PERMISSION") .. "\n" .. FGM.Permissions:GetDisplay(row),"",row.description}
+  lines={FGM:L("SYNTAX") .. "\n" .. row.syntax,"",FGM:L("PERMISSION") .. "\n" .. FGM.Permissions:GetDisplay(row),"",FGM:CommandDescription(row)}
   if row.availability~="unsupported"then self:SetAction(1,FGM:L("EXECUTE"),function()UI:Run(row,UI.args:GetText(),meta)end)end
   self:SetAction(2,FGM:L("COPY"),function()UI:Copy(FGM.CommandRegistry:Build(row,UI.args:GetText()))end)
  elseif kind=="spells"or kind=="mounts"then
-  lines[#lines+1]=categoryName(FGM.Catalog:Category(kind,row));local description=C_Spell and C_Spell.GetSpellDescription and C_Spell.GetSpellDescription(id)
+  lines[#lines+1]=categoryName(FGM.Catalog:Category(kind,row));local description=FGM:GetLanguage()==FGM:GetClientLocale() and C_Spell and C_Spell.GetSpellDescription and C_Spell.GetSpellDescription(id)
   if description and description~=""then lines[#lines+1]="";lines[#lines+1]=description end
   self:SetAction(1,FGM:L("LEARN"),function()UI:Run("learn",tostring(id),meta)end)
   self:SetAction(2,FGM:L("UNLEARN"),function()UI:Run("unlearn",tostring(id),meta,true)end)
@@ -306,10 +326,14 @@ function UI:SelectRecord(row)
   end)
  elseif kind=="bis"then
   local itemMap=FGM.Catalog:ItemMap()
-  lines[#lines+1]=FGM:L("SET_COLLECTION_HINT");lines[#lines+1]=""
-  for _,itemID in ipairs(row[4])do local item=itemMap[itemID];lines[#lines+1]="• " .. (item and item[2]or tostring(itemID)) .. " (#" .. itemID .. ")"end
+  lines[#lines+1]=FGM:L(row[6]=="bis" and "BIS_PROFILE_HINT" or "SET_COLLECTION_HINT");lines[#lines+1]=categoryName(row[6] or "other");lines[#lines+1]=""
+  if row[7] and row[7]~="" then lines[#lines+1]=FGM:L("SOURCE") .. ": " .. row[7] end
+  local unavailable=row[8] and #row[8]>0
+  if unavailable then lines[#lines+1]=FGM:L("SET_UNAVAILABLE") end
+  if row[6]=="bis" then lines[#lines+1]=FGM:L("BIS_PARTIAL",row[11] or 0) end
+  for _,itemID in ipairs(row[4])do local item=itemMap[itemID];lines[#lines+1]="• " .. (item and FGM.Catalog:Name("items",item)or tostring(itemID)) .. " (#" .. itemID .. ")"end
   self.args:Hide();self.argsLabel:Hide()
-  self:SetAction(1,FGM:L("GIVE_SET"),function()UI:Run("additem set",tostring(id),meta,true)end)
+  if not unavailable then self:SetAction(1,FGM:L("GIVE_SET"),function()if row[6]=="bis"then UI:GiveBiS(row)else UI:Run("additem set",tostring(id),meta,true)end end)end
   self:SetAction(2,FGM:L("COPY_ID"),function()UI:Copy(id)end)
  elseif kind=="items"then
   lines[#lines+1]=FGM:L("ITEM_LEVEL") .. ": " .. row[4];lines[#lines+1]=categoryName("slot_" .. row[8]);self.args:SetText("1");self.argsLabel:SetText(FGM:L("COUNT"))
@@ -322,8 +346,8 @@ function UI:SelectRecord(row)
   self:SetAction(1,FGM:L("ADD_QUEST"),function()UI:Run("quest add",tostring(id),meta)end)
   self:SetAction(2,FGM:L("COMPLETE_QUEST"),function()UI:Run("quest complete",tostring(id),meta,true)end)
   self:SetAction(3,FGM:L("REMOVE_QUEST"),function()UI:Run("quest remove",tostring(id),meta,true)end)
- elseif kind=="achievements"then lines[#lines+1]=row[3];self:SetAction(1,FGM:L("GRANT_ACHIEVEMENT"),function()UI:Run("achievement add",tostring(id),meta)end)
- elseif kind=="npcs"then lines[#lines+1]=row[3];self:SetAction(1,FGM:L("SPAWN_NPC"),function()UI:Run("npc add",tostring(id),meta,true)end)
+ elseif kind=="achievements"then lines[#lines+1]=FGM:LocalizedDetail(kind,row);self:SetAction(1,FGM:L("GRANT_ACHIEVEMENT"),function()UI:Run("achievement add",tostring(id),meta)end)
+ elseif kind=="npcs"then lines[#lines+1]=FGM:LocalizedDetail(kind,row);self:SetAction(1,FGM:L("SPAWN_NPC"),function()UI:Run("npc add",tostring(id),meta,true)end)
  elseif kind=="gameobjects"then self:SetAction(1,FGM:L("SPAWN_GO"),function()UI:Run("gobject add",tostring(id),meta,true)end)end
  local favoriteKey=kind .. ":" .. tostring(id)
  self:SetAction(4,FGM.DB.favorites[favoriteKey]and FGM:L("UNFAVORITE")or FGM:L("FAVORITE"),function()FGM:ToggleFavorite(favoriteKey,meta);UI:SelectRecord(row)end)
@@ -345,7 +369,7 @@ function UI:ShowSettings()
   local title=C:Label(p,FGM:L("SETTINGS"),true,T.colors.gold);title:SetPoint("TOPLEFT",18,-18)
   local close=C:Button(p,FGM:L("CLOSE"),90,28,function()p:Hide()end);close:SetPoint("TOPRIGHT",-14,-14)
   local lang=C:Label(p,FGM:L("LOCALE"),false,T.colors.text);lang:SetPoint("TOPLEFT",20,-64)
-  for i,locale in ipairs({"auto","enUS","frFR","esES"})do local l=locale;local b=C:Button(p,l,82,28,function()FGM.DB.profile.language=l;FGM:Print(FGM:L("RELOAD_TO_APPLY",l))end);b:SetPoint("TOPLEFT",20+(i-1)*92,-86)end
+  for i,locale in ipairs({"auto","enUS","frFR","esES"})do local l=locale;local b=C:Button(p,l=="auto" and FGM:L("LOCALE_AUTO") or l,82,28,function()FGM.DB.profile.language=l;FGM:Print(FGM:L("RELOAD_TO_APPLY",l=="auto" and FGM:L("LOCALE_AUTO") or l))end);b:SetPoint("TOPLEFT",20+(i-1)*92,-86)end
   local hide=C:Button(p,FGM:L("HIDE_MINIMAP"),250,28,function()FGM.DB.profile.minimap.hidden=not FGM.DB.profile.minimap.hidden;UI.minimap:SetShown(not FGM.DB.profile.minimap.hidden)end);hide:SetPoint("TOPLEFT",20,-134)
   local reset=C:Button(p,FGM:L("RESET_WINDOW"),250,28,function()UI.main:ClearAllPoints();UI.main:SetPoint("CENTER");UI.main:SetSize(1160,760);UI:SaveGeometry()end);reset:SetPoint("TOPLEFT",20,-174)
   for i,option in ipairs({{.85,"SCALE_SMALL"},{1,"SCALE_NORMAL"},{1.15,"SCALE_LARGE"}})do local value=option[1];local b=C:Button(p,FGM:L(option[2]),90,28,function()FGM.DB.profile.scale=value;UI.main:SetScale(value)end);b:SetPoint("TOPLEFT",20+(i-1)*100,-220)end

@@ -15,24 +15,48 @@ Catalog.sectionIcons = {
     gmtools="Interface\\Icons\\Spell_Holy_DivineShield",
 }
 local names = { [43]="SWORD_1H", [44]="AXE_1H", [54]="MACE_1H", [55]="SWORD_2H", [160]="MACE_2H", [172]="AXE_2H", [136]="STAVES" }
-function Catalog:SkillName(row) return names[row[1]] and FGM:L(names[row[1]]) or row[2] end
+function Catalog:SkillName(row) return names[row[1]] and FGM:L(names[row[1]]) or FGM:LocalizedName("skills",row) or FGM:L("MISSING_DATA_NAME",FGM:L("SKILLS"),row[1]) end
 function Catalog:ItemMap()
     if not self.itemMap then
         self.itemMap={};for _,row in ipairs(FGM.Data.Items or {})do self.itemMap[row[1]]=row end
     end
     return self.itemMap
 end
-function Catalog:Name(kind, row)
+function Catalog:Name(kind, row, noRequest)
     if row.labelKey then return FGM:L(row.labelKey) end
     if kind == "commands" then return "." .. row.name end
     if kind == "skills" then return self:SkillName(row) end
-    local name = row[2]
-    if kind == "spells" or kind == "mounts" then
+    if kind == "bis" and row[6]=="bis" then return FGM:L("TIER_BIS") .. " · " .. FGM:ClassName(row[9]) .. " · " .. FGM:L(row[10]) end
+    if kind == "teleport" then return row[2] end -- Command destination token, never translate.
+    local name = FGM:LocalizedName(kind,row)
+    if name then return name end
+    local matchingClient = FGM:GetLanguage() == FGM:GetClientLocale()
+    if (kind == "spells" or kind == "mounts") and matchingClient then
         local info = C_Spell and C_Spell.GetSpellInfo and C_Spell.GetSpellInfo(row[1])
-        if info then return info.name end
+        if info and info.name and info.name~="" then return info.name end
         if GetSpellInfo then name = GetSpellInfo(row[1]) or name end
-    elseif kind == "items" and GetItemInfo then name = GetItemInfo(row[1]) or name end
-    return name and name ~= "" and name or (FGM:L("ID") .. " " .. row[1])
+    elseif kind == "items" and matchingClient then
+        local get = C_Item and C_Item.GetItemInfo or GetItemInfo
+        if get then name = get(row[1]) end
+        if not name and not noRequest and C_Item and C_Item.RequestLoadItemDataByID then
+            self.requestedItems=self.requestedItems or {}
+            if not self.requestedItems[row[1]] then self.requestedItems[row[1]]=true;C_Item.RequestLoadItemDataByID(row[1]) end
+        end
+    end
+    return name and name ~= "" and name or FGM:L("MISSING_DATA_NAME",FGM:L(({items="ITEMS",spells="SPELLS",mounts="MOUNTS",languages="LANGUAGES",quests="QUESTS",npcs="NPCS",gameobjects="GAMEOBJECTS",bis="BIS",achievements="ACHIEVEMENTS"})[kind] or "ID"),row[1])
+end
+
+function Catalog:PrimeEnglishItemNames()
+    -- Only the small remaining English gap is preloaded, never thousands of
+    -- cross-locale requests. The game controls what can actually be resolved.
+    if FGM:GetLanguage()~="enUS" or FGM:GetClientLocale()~="enUS" then return end
+    if not (C_Item and C_Item.RequestLoadItemDataByID) then return end
+    local requested=0
+    for _,row in ipairs(FGM.Data.Items or {})do
+        if not FGM:LocalizedName("items",row) and requested<128 then
+            self:Name("items",row);requested=requested+1
+        end
+    end
 end
 function Catalog:Icon(kind, row)
     if row.icon then return row.icon end
@@ -66,7 +90,7 @@ function Catalog:Category(kind, row)
     end
     if kind == "items" then return "slot_" .. row[8] end
     if kind == "mounts" then return "mounts" end
-    if kind == "bis" then return "all" end
+    if kind == "bis" then return row[6] or "other" end
     return "all"
 end
 

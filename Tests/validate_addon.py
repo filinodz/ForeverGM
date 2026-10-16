@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import json
 import struct
 import sys
 from pathlib import Path
@@ -80,6 +81,28 @@ missing_fr = key_sets[0] - key_sets[1]
 missing_es = key_sets[0] - key_sets[2]
 if missing_fr or missing_es:
     fail(f"locale keys missing; fr={sorted(missing_fr)}, es={sorted(missing_es)}")
+
+coverage = json.loads((ROOT / 'docs' / 'LOCALE_COVERAGE.json').read_text(encoding='utf-8'))
+item_text = (ROOT / 'Data' / 'Items.lua').read_text(encoding='utf-8')
+item_ids = re.findall(r'^  \{(\d+),', item_text, re.MULTILINE)
+if len(item_ids) != len(set(item_ids)) or len(item_ids) != coverage['items']:
+    fail('item identity/count mismatch with coverage report')
+mount_text = (ROOT / 'Data' / 'Mounts.lua').read_text(encoding='utf-8')
+mount_ids = re.findall(r'^  \{(\d+),', mount_text, re.MULTILINE)
+if len(mount_ids) != len(set(mount_ids)) or len(mount_ids) != coverage['mounts']:
+    fail('mount identity/count mismatch with coverage report')
+skill_ids = set(re.findall(r'^  \{(\d+),', (ROOT/'Data'/'Skills.lua').read_text(encoding='utf-8'), re.MULTILINE))
+skills = json.loads((ROOT/'Tools'/'SkillTranslations.json').read_text(encoding='utf-8'))
+if skill_ids-set(skills) or any(len(skills[i]) != 2 or not all(skills[i]) for i in skill_ids):
+    fail('English/Spanish skill translations are incomplete')
+bis = json.loads((ROOT/'docs'/'BIS_COVERAGE.json').read_text(encoding='utf-8'))
+if len(bis) != 9 or len({profile['classID'] for profile in bis}) != 9:
+    fail('Phase-6 candidate class coverage mismatch')
+for profile in bis:
+    if not profile['source'].startswith('https://www.icy-veins.com/wow-classic/') or not profile['availableIDs']:
+        fail('missing BiS source or validated candidates')
+    if any(str(i) not in set(item_ids) for i in profile['availableIDs']):
+        fail('BiS candidate references an unavailable item')
 
 reference = ROOT / "docs" / "COMMAND_REFERENCE.md"
 if not reference.exists() or reference.stat().st_size < 100_000:

@@ -1,0 +1,43 @@
+local _, FGM = ...
+local values = {
+ enUS = {
+  COMPATIBILITY_WARNING="Compatibility warning: expected interface %d, detected %d.", LOCALE_AUTO="Auto",
+  SLOT_27="Quiver", SLOT_29="Profession tool", SLOT_30="Profession equipment",
+  TIER_SHORT_T1="T1", TIER_SHORT_T2="T2", TIER_SHORT_T3="T3", TIER_SHORT_BIS="BiS",
+  BIS="Sets / BiS", BIS_DPS="Damage", BIS_HEALER="Healing", BIS_PARTIAL="%d source recommendations are unresolved or absent; only the verified subset shown below is grantable. Alternatives may share slots; this is not an optimized single loadout.",
+  SET_UNAVAILABLE="Some legacy members are absent from this client/server catalog. Granting is disabled; select an available client variant instead.",
+  MISSING_DATA_NAME="%s #%d (translation unavailable)", NATIVE_TOOLTIP_LANGUAGE="Full native tooltip follows the game-client language; hidden here to respect the selected addon language.",
+  GIVE_MOUNTS="Give all mounts", GIVE_GM_SPELLS="Give GM spells", BULK_SPELL_COUNT="%d selected spells", BULK_LEARN="Learn selected spells", BULK_MOUNT_HINT="Review all catalog mounts for %s. Faction, race and server restrictions may apply. This does not change the target or bypass restrictions.", BULK_GM_HINT="Verified core debug spells for %s. Review carefully: these are not ordinary class spells.",
+  TIER_T1="T1 — Molten Core", TIER_T2="T2 — Blackwing Lair", TIER_T3="T3 — Naxxramas", TIER_OTHER="Other equipment sets", TIER_BIS="BiS — PvE Phase 6", BIS_PROFILE_HINT="Sourced Classic Era PvE Phase 6 profile. Not a guarantee of optimal gearing under custom WoWForever balance; grants items to bags, not automatic equipping.",
+  COMMAND_HELP_LOCAL="Use .help %s in game to request help from the server in its supported language.", ROLE_PLAYER="Player", ROLE_MODERATOR="Moderator", ROLE_GM="Game Master", ROLE_ADMIN="Administrator", ROLE_EXPLICIT="Explicit RBAC grant",
+  CLASS_WARRIOR="Warrior", CLASS_PALADIN="Paladin", CLASS_HUNTER="Hunter", CLASS_ROGUE="Rogue", CLASS_PRIEST="Priest", CLASS_SHAMAN="Shaman", CLASS_MAGE="Mage", CLASS_WARLOCK="Warlock", CLASS_DRUID="Druid",
+  SLOT_0="Not equippable", SLOT_1="Head", SLOT_2="Neck", SLOT_3="Shoulder", SLOT_4="Shirt", SLOT_5="Chest", SLOT_6="Waist", SLOT_7="Legs", SLOT_8="Feet", SLOT_9="Wrist", SLOT_10="Hands", SLOT_11="Finger", SLOT_12="Trinket", SLOT_13="One-hand", SLOT_14="Shield", SLOT_15="Ranged", SLOT_16="Back", SLOT_17="Two-hand", SLOT_18="Bag", SLOT_19="Tabard", SLOT_20="Robe", SLOT_21="Main hand", SLOT_22="Off hand", SLOT_23="Held in off hand", SLOT_24="Ammunition", SLOT_25="Thrown", SLOT_26="Ranged", SLOT_28="Relic",
+ },
+ frFR = {
+  COMPATIBILITY_WARNING="Avertissement de compatibilité : interface %d attendue, %d détectée.", LOCALE_AUTO="Auto",
+  SLOT_27="Carquois", SLOT_29="Outil de métier", SLOT_30="Équipement de métier",
+  TIER_SHORT_T1="T1", TIER_SHORT_T2="T2", TIER_SHORT_T3="T3", TIER_SHORT_BIS="BiS",
+  BIS="Sets / BiS", BIS_DPS="Dégâts", BIS_HEALER="Soins", BIS_PARTIAL="%d recommandations de la source ne sont pas résolues ou sont absentes ; seul le sous-ensemble vérifié ci-dessous peut être donné. Des alternatives occupent les mêmes emplacements : ce n’est pas une tenue optimisée unique.",
+  SET_UNAVAILABLE="Des pièces d’origine sont absentes du catalogue de ce client/serveur. Le don est désactivé ; choisissez une variante client disponible.",
+  MISSING_DATA_NAME="%s n°%d (traduction indisponible)", NATIVE_TOOLTIP_LANGUAGE="L’infobulle native suit la langue du client ; elle est masquée ici pour respecter la langue choisie dans l’addon.",
+  GIVE_MOUNTS="Toutes les montures", GIVE_GM_SPELLS="Donner les sorts MJ", BULK_SPELL_COUNT="%d sorts sélectionnés", BULK_LEARN="Apprendre les sorts choisis", BULK_MOUNT_HINT="Vérifiez toutes les montures du catalogue pour %s. Des restrictions de faction, race et serveur peuvent s’appliquer. La cible et les restrictions ne sont pas modifiées.", BULK_GM_HINT="Sorts de débogage vérifiés du core pour %s. Vérifiez attentivement : ce ne sont pas des sorts de classe ordinaires.",
+  TIER_T1="T1 — Cœur du Magma", TIER_T2="T2 — Repaire de l’Aile noire", TIER_T3="T3 — Naxxramas", TIER_OTHER="Autres ensembles", TIER_BIS="BiS — PvE phase 6", BIS_PROFILE_HINT="Profil PvE Classic Era phase 6 avec source. Son optimalité n’est pas garantie pour l’équilibrage personnalisé de WoWForever. Les objets sont ajoutés aux sacs, pas équipés automatiquement.",
+  COMMAND_HELP_LOCAL="Utilisez .help %s en jeu pour demander l’aide du serveur dans sa langue disponible.", ROLE_PLAYER="Joueur", ROLE_MODERATOR="Modérateur", ROLE_GM="Maître de jeu", ROLE_ADMIN="Administrateur", ROLE_EXPLICIT="Autorisation RBAC explicite",
+  CLASS_WARRIOR="Guerrier", CLASS_PALADIN="Paladin", CLASS_HUNTER="Chasseur", CLASS_ROGUE="Voleur", CLASS_PRIEST="Prêtre", CLASS_SHAMAN="Chaman", CLASS_MAGE="Mage", CLASS_WARLOCK="Démoniste", CLASS_DRUID="Druide",
+  SLOT_0="Non équipable", SLOT_1="Tête", SLOT_2="Cou", SLOT_3="Épaules", SLOT_4="Chemise", SLOT_5="Torse", SLOT_6="Taille", SLOT_7="Jambes", SLOT_8="Pieds", SLOT_9="Poignets", SLOT_10="Mains", SLOT_11="Doigt", SLOT_12="Bijou", SLOT_13="Une main", SLOT_14="Bouclier", SLOT_15="À distance", SLOT_16="Dos", SLOT_17="Deux mains", SLOT_18="Sac", SLOT_19="Tabard", SLOT_20="Robe", SLOT_21="Main droite", SLOT_22="Main gauche", SLOT_23="Tenu en main gauche", SLOT_24="Munitions", SLOT_25="Armes de jet", SLOT_26="À distance", SLOT_28="Relique",
+ },
+ esES = {
+  COMPATIBILITY_WARNING="Aviso de compatibilidad: se esperaba la interfaz %d y se detectó la %d.", LOCALE_AUTO="Automático",
+  SLOT_27="Carcaj", SLOT_29="Herramienta de profesión", SLOT_30="Equipo de profesión",
+  TIER_SHORT_T1="T1", TIER_SHORT_T2="T2", TIER_SHORT_T3="T3", TIER_SHORT_BIS="BiS",
+  BIS="Conjuntos / BiS", BIS_DPS="Daño", BIS_HEALER="Sanación", BIS_PARTIAL="%d recomendaciones de la fuente no están resueltas o no existen; solo se puede dar el subconjunto verificado indicado. Las alternativas pueden compartir casillas; no es un conjunto óptimo único.",
+  SET_UNAVAILABLE="Faltan piezas originales en el catálogo de este cliente/servidor. La entrega está desactivada; elige una variante disponible del cliente.",
+  MISSING_DATA_NAME="%s n.º %d (traducción no disponible)", NATIVE_TOOLTIP_LANGUAGE="La descripción nativa usa el idioma del cliente; se oculta aquí para respetar el idioma elegido del addon.",
+  GIVE_MOUNTS="Todas las monturas", GIVE_GM_SPELLS="Dar hechizos MJ", BULK_SPELL_COUNT="%d hechizos seleccionados", BULK_LEARN="Aprender hechizos elegidos", BULK_MOUNT_HINT="Revisa todas las monturas del catálogo para %s. Pueden aplicarse restricciones de facción, raza y servidor. No se cambia el objetivo ni se eluden restricciones.", BULK_GM_HINT="Hechizos de depuración verificados del núcleo para %s. Revisa con cuidado: no son hechizos de clase normales.",
+  TIER_T1="T1 — Núcleo de Magma", TIER_T2="T2 — Guarida de Alanegra", TIER_T3="T3 — Naxxramas", TIER_OTHER="Otros conjuntos", TIER_BIS="BiS — JcE fase 6", BIS_PROFILE_HINT="Perfil JcE Classic Era fase 6 con fuente. No garantiza el equipo óptimo con el equilibrio personalizado de WoWForever. Los objetos van a las bolsas; no se equipan automáticamente.",
+  COMMAND_HELP_LOCAL="Usa .help %s en el juego para pedir ayuda al servidor en su idioma disponible.", ROLE_PLAYER="Jugador", ROLE_MODERATOR="Moderador", ROLE_GM="Maestro de juego", ROLE_ADMIN="Administrador", ROLE_EXPLICIT="Permiso RBAC explícito",
+  CLASS_WARRIOR="Guerrero", CLASS_PALADIN="Paladín", CLASS_HUNTER="Cazador", CLASS_ROGUE="Pícaro", CLASS_PRIEST="Sacerdote", CLASS_SHAMAN="Chamán", CLASS_MAGE="Mago", CLASS_WARLOCK="Brujo", CLASS_DRUID="Druida",
+  SLOT_0="No equipable", SLOT_1="Cabeza", SLOT_2="Cuello", SLOT_3="Hombros", SLOT_4="Camisa", SLOT_5="Pecho", SLOT_6="Cintura", SLOT_7="Piernas", SLOT_8="Pies", SLOT_9="Muñecas", SLOT_10="Manos", SLOT_11="Dedo", SLOT_12="Abalorio", SLOT_13="Una mano", SLOT_14="Escudo", SLOT_15="A distancia", SLOT_16="Espalda", SLOT_17="Dos manos", SLOT_18="Bolsa", SLOT_19="Tabardo", SLOT_20="Toga", SLOT_21="Mano derecha", SLOT_22="Mano izquierda", SLOT_23="Sostenido en mano izquierda", SLOT_24="Munición", SLOT_25="Arrojadizas", SLOT_26="A distancia", SLOT_28="Reliquia",
+ },
+}
+for locale, entries in pairs(values) do for key, value in pairs(entries) do FGM.Locales[locale][key]=value end end

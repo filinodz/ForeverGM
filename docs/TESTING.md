@@ -12,17 +12,19 @@ node --max-old-space-size=4096 Tests/runtime.js
 
 The validator checks the interface number, all TOC paths, command-count/identity integrity, command provenance and permission fields, minimum source-dataset counts, localization key parity, and the generated command-reference artifact.
 
-Latest result on 2026-10-15: **PASS — 53 TOC files, 680 commands, all dataset and locale checks passed.** The validator also checks runtime/TOC version parity and the transparent 128px minimap TGA format.
+Latest result on 2026-10-16: **PASS — 58 TOC files, 680 commands, all dataset and locale checks passed.** The validator also checks runtime/TOC version parity, the transparent 128px minimap TGA, coverage-report counts, unique item/mount IDs, skill translations and BiS candidate identity/provenance.
 
 All addon Lua files were parsed successfully in Lua 5.1 mode with `luaparse` 0.3.1. The parser is a test dependency only.
 
-## Runtime regression suite, 0.11.1
+## Runtime regression suite, 0.12.0
 
 `Tests/runtime.js` runs the actual TOC modules in Fengari with the WoW API mock in `Tests/runtime.lua`. It does not send real chat messages or alter a character.
 
-Latest result: **2,269 assertions passed**. Coverage includes the dashboard landing page; all 12 exact count cards and navigation destinations; restored collection viewport/inspector anchors; all 16 shortcuts; absence of dashboard pagination/search; card bounds and scroll extents at widths 820, 1000, 1160, 1600 and 1920; confirmation/default arguments for every GM shortcut; workflow previews; minimap icon, hover/press feedback, left/right click and drag persistence; collections on opening; all data pages; icon binding (including Quest navigation, cards and detail); Mage and GM/internal/trainer/quest/racial spell filters; command-category predicates; set membership; default GM shortcut parameters; staff versus two-handed-sword compatibility; Skyborne race masks; invalid/test skill exclusion; proficiency spell selection; locale parity; dangerous-action confirmation; and immediate cancellation when the target changes.
+Latest result: **6,313 assertions passed**. Coverage includes the dashboard landing page; all 12 exact count cards and navigation destinations; restored collection viewport/inspector anchors; all 16 shortcuts; absence of dashboard pagination/search; card bounds and scroll extents at widths 820, 1000, 1160, 1600 and 1920; confirmation/default arguments for every GM shortcut; workflow previews; minimap icon, hover/press feedback, left/right click and drag persistence; collections on opening; all data pages; icon binding (including Quest navigation, cards and detail); Mage and GM/internal/trainer/quest/racial spell filters; command-category predicates; set membership; default GM shortcut parameters; staff versus two-handed-sword compatibility; Skyborne race masks; invalid/test skill exclusion; proficiency spell selection; locale parity and formatted compatibility warnings; dangerous-action confirmation; and immediate cancellation when the target changes.
 
 `Tests/commands.lua` additionally checks immediate dispatch without an OnUpdate tick, self-whisper recipient/channel arguments, local chat echo, no duplicate sends, burst and bulk pacing without responses, observation expiry, transport errors, modern/legacy APIs, missing API/name, validation and combat/target/cancellation guards. No real GM command is executed during tests.
+
+`Tests/localization.lua` checks English selection on a French client, locale aliases and unsupported-client isolation, all interface keys and all 154 skill labels in EN/FR/ES, all 13 language records, every used slot label, name search, explicit missing-data fallback, modern uncached item loading and the 23-name English preload gap, non-destructive cache refresh, tooltip-language isolation, mount/GM previews and target cancellation, all 27 tier cards, missing-member grant blocking, nine sourced BiS candidate queues and responsive four-button toolbars.
 
 Fengari supplies a Lua VM, not the game renderer. These tests verify runtime control flow with mocked APIs; visual rendering and live command acceptance are separate in-game checks.
 
@@ -53,5 +55,6 @@ The character addon list was updated to enable ForeverGM. The client executable 
 
 - Successful visual QA in the running client
 - Successful command execution on every realm/ruleset
-- Correctness of an unsourced BiS profile (none is packaged)
+- Complete optimized BiS loadouts or optimality under custom WoWForever balance (only sourced, availability-filtered candidates are packaged)
+- 100% translation of every custom game-data record (see measured locale coverage)
 - Complete achievement names beyond the 104 populated local hotfix records

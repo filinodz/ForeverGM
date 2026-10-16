@@ -1,6 +1,16 @@
 # Data sources and provenance
 
-All generated data comes from this installed ForeverRepack. No retail web dataset was substituted.
+Core game catalogs come from the matching installed core/client extracts. No retail web dataset was substituted. Phase-6 recommendation sources are separate, explicitly cited candidate lists rather than replacements for local item metadata.
+
+## 0.12.0 update, 2026-10-16
+
+`Tools/refresh_collections.py` imported matching local locale tables and current armory metadata, preserving existing records and adding 47 items (24,335 total). It reads all 141 positive mount SourceSpellIDs available in unencrypted/known-key Mount.db2 sections; five additional references are retained with pending-name status rather than guessed names. Three additional file records were not readable with the available section keys and are not claimed as included.
+
+The client ItemSet table yields 277 inspectable set records, including all 27 original tier sets. Eighteen T1/T2 sets have missing item metadata and cannot be granted. Nine Icy Veins Classic Era Phase-6 source-candidate collections are appended separately; only exact, unambiguous local name/ID matches are grantable. [BIS_COVERAGE.json](BIS_COVERAGE.json) retains all sources and unresolved recommendations; no source prose is bundled as game documentation.
+
+Locale names use `quest_template_locale`, `creature_template_locale`, `gameobject_template_locale` and populated hotfix item/spell/achievement locale tables. Read [LOCALIZATION.md](LOCALIZATION.md) and [LOCALE_COVERAGE.json](LOCALE_COVERAGE.json) for coverage and limitations. Imports use read-only SQL; no configuration or credentials are included.
+
+## Original 0.10.0 snapshot (historical counts)
 
 | Dataset | Authoritative local source | Generated file | Rows at generation |
 |---|---|---|---:|
@@ -24,7 +34,7 @@ The data was generated on 2026-10-14 with `Tools/generate_data.py`. Run that too
 - The client extraction tables currently contain localized French names for many records. At runtime, item/spell tooltips use the client API and therefore follow the active client locale when the record is cached.
 - Mounts are now extracted from the installed client Mount.db2 rather than limited to the server's faction-conversion table. PlayerConditionID is retained; bulk mount learning is not inferred from that opaque condition.
 - Only 104 achievement metadata rows are populated in `hotfixes.achievement`; ForeverGM exposes exactly those rows and does not invent titles for the remaining IDs in `achievement_dbc`.
-- No reviewed, phase-specific WoWForever BiS source exists in the workspace. The BiS framework is disabled rather than shipping fabricated recommendations.
+- At 0.10.0 no reviewed phase-specific WoWForever BiS source existed. Version 0.12.0 adds separately labeled Classic Era source candidates, not guaranteed custom-realm BiS loadouts.
 
 ## Ecosystem references reviewed
 

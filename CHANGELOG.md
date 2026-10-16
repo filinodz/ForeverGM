@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.12.0 — 2026-10-16
+
+- Apply the selected addon language to catalog names, name search, set-member previews, class/slot/role labels and summaries, not only navigation text.
+- Normalize locale aliases, including `enUs`, `enGB` and `esMX`; Auto follows the game client's text locale.
+- Localize the remaining compatibility warning and Auto setting label.
+- Import available French/Spanish quest, NPC, object and achievement names; add complete English/Spanish skill and language labels alongside French.
+- Use offline English item names (24,312 records), modern item APIs and cache-completion refresh; never silently display a different language for unresolved data.
+- Add 47 client-metadata items (24,335 total) and expose 5 additional Mount.db2 SourceSpellID references (141 mounts total). These five references await name resolution in the matching-language client.
+- Add confirmed, selectable all-mount and verified-GM-spell grants with target-GUID protection; retain the existing all-compatible-skills preview.
+- Expand to 277 client set records, with direct T1/T2/T3 filters and exact class masks. All 27 original tier sets are visible; 18 legacy T1/T2 sets whose members are absent from the inspected item metadata are explicitly unavailable, not silently omitted or grantable.
+- Add 9 sourced Classic Era PvE Phase-6 candidate collections. Only exact, unambiguous item matches are granted; unresolved source recommendations and alternatives are disclosed. These are not complete optimized loadouts or custom-realm BiS guarantees.
+- Wrap the four-button toolbars responsively and increase the minimum window height to 700px.
+- Document incomplete multilingual data coverage honestly. This release does not claim every custom record has a translation in every language.
+- Command transport is unchanged from 0.11.1.
+
 ## 0.11.1 — 2026-10-15
 
 - Send isolated commands synchronously from their button/confirmation click instead of deferring every operation to OnUpdate.

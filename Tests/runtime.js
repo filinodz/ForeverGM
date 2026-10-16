@@ -16,4 +16,5 @@ for (const file of fs.readFileSync(path.join(root,'ForeverGM.toc'),'utf8').split
  run(fs.readFileSync(path.join(root,file),'utf8'),file,true);
 }
 run(fs.readFileSync(path.join(__dirname,'commands.lua'),'utf8'),'command transport tests');
-run('print("PASS: " .. (FGM_RUN_TESTS() + FGM_RUN_COMMAND_TESTS()) .. " runtime assertions; browsing, layout, minimap, immediate chat transport, throttling, confirmation and cancellation")','tests');
+run(fs.readFileSync(path.join(__dirname,'localization.lua'),'utf8'),'localization and collections tests');
+run('print("PASS: " .. (FGM_RUN_TESTS() + FGM_RUN_COMMAND_TESTS() + FGM_RUN_LOCALIZATION_TESTS()) .. " runtime assertions; localization, cache, collection coverage, targeted bulk grants, layout and chat transport")','tests');

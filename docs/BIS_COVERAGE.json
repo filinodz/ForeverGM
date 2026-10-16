@@ -1,0 +1,247 @@
+[
+  {
+    "classID": 8,
+    "source": "https://www.icy-veins.com/wow-classic/mage-dps-pve-gear-best-in-slot",
+    "availableIDs": [
+      19339,
+      19379,
+      21585,
+      22496,
+      22498,
+      22500,
+      23046,
+      23057,
+      23062,
+      23237
+    ],
+    "unresolvedSourceNames": [
+      "Rime Covered Mantle",
+      "Cloak of the Necropolis",
+      "The Soul Harvester's Bindings",
+      "Eyestalk Waist Cord",
+      "Leggings of Polarity",
+      "Soulseeker",
+      "Wraith Blade",
+      "Sapphiron's Left Eye",
+      "Doomfinger"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 1,
+    "source": "https://www.icy-veins.com/wow-classic/warrior-dps-pve-gear-best-in-slot",
+    "availableIDs": [
+      12640,
+      19325,
+      19406,
+      21330,
+      21581,
+      22954,
+      23038,
+      23041,
+      23053
+    ],
+    "unresolvedSourceNames": [
+      "Shroud of Dominion",
+      "Plated Abomination Ribcage",
+      "Wristguards of Vengeance",
+      "Girdle of the Mentor",
+      "Legplates of Carnage",
+      "Chromatic Boots",
+      "Diamond Flask",
+      "Gressil, Dawn of Ruin",
+      "The Hungering Cold",
+      "Might of Menethil",
+      "Soulstring"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 5,
+    "source": "https://www.icy-veins.com/wow-classic/priest-healer-pve-gear-best-in-slot",
+    "availableIDs": [
+      19395,
+      21582,
+      22514,
+      22515,
+      22516,
+      22517,
+      22939,
+      23036,
+      23047,
+      23061
+    ],
+    "unresolvedSourceNames": [
+      "Cloak of Suturing",
+      "Robes of Transcendence",
+      "Bindings of Transcendence",
+      "Leggings of Transcendence",
+      "Hammer of the Twisting Nether",
+      "Sapphiron's Right Eye",
+      "Wand of the Whispering Dead"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 3,
+    "source": "https://www.icy-veins.com/wow-classic/hunter-dps-pve-gear-best-in-slot",
+    "availableIDs": [
+      16463,
+      18714,
+      19377,
+      21710,
+      22436,
+      22437,
+      22438,
+      22439,
+      22440,
+      22442,
+      22443,
+      22961,
+      23041,
+      23067
+    ],
+    "unresolvedSourceNames": [
+      "Blackhand's Breadth",
+      "Kingsfall",
+      "Iblis, Blade of the Fallen Seraph",
+      "Nerubian Slavemaker"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 4,
+    "source": "https://www.icy-veins.com/wow-classic/rogue-dps-pve-gear-best-in-slot",
+    "availableIDs": [
+      19377,
+      21126,
+      21364,
+      21710,
+      22477,
+      22478,
+      22479,
+      22480,
+      22481,
+      22482,
+      22483,
+      22954,
+      23038,
+      23060
+    ],
+    "unresolvedSourceNames": [
+      "Mark of the Champion",
+      "Gressil, Dawn of Ruin",
+      "The Hungering Cold",
+      "Kingsfall",
+      "Nerubian Slavemaker"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 9,
+    "source": "https://www.icy-veins.com/wow-classic/warlock-dps-pve-gear-best-in-slot",
+    "availableIDs": [
+      19379,
+      21186,
+      21585,
+      21709,
+      22504,
+      22506,
+      22507,
+      22508,
+      23031,
+      23046,
+      23057
+    ],
+    "unresolvedSourceNames": [
+      "Cloak of the Necropolis",
+      "Eyestalk Waist Cord",
+      "Leggings of Polarity",
+      "Mark of the Champion",
+      "Wraith Blade",
+      "Sapphiron's Left Eye",
+      "Wand of Fates"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 11,
+    "source": "https://www.icy-veins.com/wow-classic/restoration-druid-healer-pve-gear-best-in-slot",
+    "availableIDs": [
+      19382,
+      19395,
+      21582,
+      21604,
+      21712,
+      22399,
+      22488,
+      22493,
+      22939,
+      23047
+    ],
+    "unresolvedSourceNames": [
+      "Crystal Adorned Crown",
+      "Wild Growth Spaulders",
+      "Cloak of Suturing",
+      "Empowered Leggings",
+      "Boots of Pure Thought",
+      "Hammer of the Twisting Nether",
+      "Sapphiron's Right Eye"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 2,
+    "source": "https://www.icy-veins.com/wow-classic/holy-paladin-healer-pve-gear-best-in-slot",
+    "availableIDs": [
+      19382,
+      19395,
+      21582,
+      21604,
+      21667,
+      21712,
+      22425,
+      22428,
+      22429,
+      22430,
+      23006,
+      23047,
+      23066
+    ],
+    "unresolvedSourceNames": [
+      "Cloak of Suturing",
+      "Peacekeeper Gauntlets",
+      "Hammer of the Twisting Nether",
+      "Shield of Condemnation"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  },
+  {
+    "classID": 7,
+    "source": "https://www.icy-veins.com/wow-classic/restoration-shaman-healer-pve-gear-best-in-slot",
+    "availableIDs": [
+      19382,
+      19395,
+      21583,
+      21625,
+      21712,
+      22396,
+      22464,
+      22465,
+      22467,
+      22468,
+      22470,
+      23047,
+      23065
+    ],
+    "unresolvedSourceNames": [
+      "Helmet of Ten Storms",
+      "Bracers of Ten Storms",
+      "Gauntlets of Ten Storms",
+      "Spire of Twilight",
+      "Hammer of the Twisting Nether",
+      "Shield of Condemnation"
+    ],
+    "scope": "Phase 6 source candidates, including alternatives; not a complete optimized loadout"
+  }
+]
